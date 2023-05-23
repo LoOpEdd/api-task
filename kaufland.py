@@ -13,7 +13,6 @@ LOG = logging.getLogger(__name__)
 class HTTPConnection:
     def __init__(self) -> None:
         self.session = requests.session()
-        self.erros = 0
         self.backoff_factor = 30
 
     def request(self, method, url, headers=None, params=None, data=None, retries=0, **kwargs):

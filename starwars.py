@@ -5,12 +5,18 @@ import json
 
 kaufland_request = HTTPConnection()
 
-def get_starship_from_name(name):
-    url = f'https://swapi.dev/api/starships/?search={name}'
+def get_starship_from_name(name, exact_match):
+    url = f'https://swapi.dev/api/starships/'
+    query = {
+        'search': name
+    }
     while url:
-        resp = kaufland_request.request('get', url, retries=1)
+        resp = kaufland_request.request('get', url, params=query, retries=1)
         starship_data = json.loads(resp.content)
-        ship = filter(lambda x: name in x['name'], starship_data['results'])
+        if exact_match:
+            ship = filter(lambda x: x['name'] == name, starship_data['results'])
+        else:
+            ship = starship_data['results']
         for i in ship:
             yield i
         url = starship_data.get('next', None)
@@ -38,24 +44,6 @@ def get_planets_from_starship(starship_data):
         planet_data = json.loads(resp.content)
         yield planet_data['name']
 
-starships = get_starship_from_name('Naboo')
-# for starship_data in starships:
-#     planets = (starship_data['name'], get_planets_from_starship(starship_data))
+# starships = get_starship_from_name('Naboo', True)
 
-print({starship_data['name']: list(get_planets_from_starship(starship_data)) for starship_data in starships })
-
-# app = Flask(__name__)
-# api = Api(app)
-
-# class StarWars(Resource):
-#     def get(self):
-#         return {'tste': 'starship'}, 200
-
-# api.add_resource(StarWars, '/star-wars')
-
-# if __name__ == '__main__':
-#     app.run()  # run our Flask app
-
-# # conn = HTTPConnection()
-# # teste = conn.request('get', 'http://swapi.dev/api/planets/1/')
-# # print(teste)
+# print({starship_data['name']: list(get_planets_from_starship(starship_data)) for starship_data in starships })
