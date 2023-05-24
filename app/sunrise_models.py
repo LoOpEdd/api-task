@@ -7,7 +7,7 @@ from astral import LocationInfo
 from astral.sun import sun
 from dateutil import tz
 
-TIMEZONE = 'GMT-3'
+# TIMEZONE = 'GMT-3'
 kaufland_request = HTTPConnection()
 
 def get_city_links(name, exact_match):
@@ -50,7 +50,7 @@ def get_sunrises(city_data, year, estimation=None):
             query = {
                 'lat': city_data['location']['latlon']['latitude'],
                 'lng': city_data['location']['latlon']['longitude'],
-                'timezone': TIMEZONE,
+                'timezone': city_data['_links']['city:timezone']['name'],
                 'date': current_date_string
             }
             resp = kaufland_request.request('get', url, params=query, retries=1)
@@ -70,8 +70,8 @@ def get_time_diff(time_a, time_b):
     return date_time_difference.total_seconds()
 
 def get_estimated_sunrise(city_data, year):
-    brl = tz.gettz(TIMEZONE)
-    city = LocationInfo('', '', TIMEZONE, city_data['location']['latlon']['latitude'], city_data['location']['latlon']['longitude'])
+    brl = tz.gettz(city_data['_links']['city:timezone']['name'])
+    city = LocationInfo('', '', city_data['_links']['city:timezone']['name'], city_data['location']['latlon']['latitude'], city_data['location']['latlon']['longitude'])
 
     sunrise_top = datetime.datetime.strptime('1000-01-01 12:00:00 AM', '%Y-%m-%d %I:%M:%S %p')
     sunrise_low = datetime.datetime.strptime('9999-01-01 12:00:00 PM', '%Y-%m-%d %I:%M:%S %p')
