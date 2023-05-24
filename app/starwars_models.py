@@ -1,6 +1,4 @@
-from kaufland import HTTPConnection
-from flask  import Flask
-from flask_restful import Resource, Api, reqparse
+from app.kaufland_models import HTTPConnection
 import json
 
 kaufland_request = HTTPConnection()
