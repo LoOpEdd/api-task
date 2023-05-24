@@ -19,7 +19,7 @@ def get_city_links(name, exact_match):
     cities = json.loads(resp.content)
     for city in cities['_embedded']['city:search-results']:
         if exact_match:
-            if any(filter(lambda x: x['name'] == name, city['matching_alternate_names'])):
+            if any(filter(lambda x: name in x['name'].split(',')[0][:len(name)], city['matching_alternate_names'])):
                 yield city['_links']['city:item']['href']
         else:
             yield city['_links']['city:item']['href']
@@ -33,8 +33,8 @@ def get_sunrises(city_data, year, estimation=None):
     dates_ranges = []
     if estimation:
         est_sunrise_top, est_sunrise_low = estimation
-        dates_ranges.append((est_sunrise_top - datetime.timedelta(days=10), est_sunrise_top + datetime.timedelta(days=10)))
-        dates_ranges.append((est_sunrise_low - datetime.timedelta(days=10), est_sunrise_low + datetime.timedelta(days=10)))
+        dates_ranges.append((est_sunrise_top - datetime.timedelta(days=4), est_sunrise_top + datetime.timedelta(days=4)))
+        dates_ranges.append((est_sunrise_low - datetime.timedelta(days=4), est_sunrise_low + datetime.timedelta(days=4)))
     else:
         dates_ranges.append((datetime.date(year, 1, 1), datetime.date(year, 12, 31)))
 
